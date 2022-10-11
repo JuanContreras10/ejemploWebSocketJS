@@ -2,6 +2,7 @@ console.log("Servidor iniciado...");
 const path = require('path');
 const socketIO = require('socket.io');
 const express = require('express');
+const fetch = require('node-fetch');
 
 const app = express();
 
@@ -32,6 +33,23 @@ io.on('connection',(socket)=>{
      
         console.log("typing "+data+"...");
         socket.broadcast.emit("chat:typing", data);
+    });
+    socket.on("servidor:api", (data) => {
+         
+        console.log("transmitiendo "+data+"...");
+        let options = {
+            method: 'GET',
+          
+          };
+          let url = 'https://randomuser.me/api/';
+          fetch(url, options)
+            .then(res => res.json())
+            .then(json => {
+                console.log("redirijir "+data+"...");               
+               let jso = JSON.stringify(json.results);  
+                 io.sockets.emit("servidor:api",jso);
+             })
+            .catch(err => console.error('error:' + err));
     });
 
 });

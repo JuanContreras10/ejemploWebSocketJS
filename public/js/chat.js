@@ -7,6 +7,8 @@ let user = document.getElementById("user");
 let actions = document.getElementById("actions");
 let outputs = document.getElementById("outputs");
 let btnSend = document.getElementById("send");
+let inputGenero = document.getElementById("genero");
+let btnApi = document.getElementById("api");
 
 btnSend.addEventListener("click", function() {
 
@@ -15,6 +17,13 @@ btnSend.addEventListener("click", function() {
         user: user.value,
         message: message.value
     });
+    
+});
+
+btnApi.addEventListener("click", function() {
+
+    console.log("click")
+    socket.emit("servidor:api", "get");
     
 });
 
@@ -37,5 +46,17 @@ socket.on("chat:typing", function (data) {
     </em></p>`;
    
 
+
+});
+
+socket.on("servidor:api", function (data) {   
+    
+ let jsonDecode = JSON.parse(data);
+
+ 
+ jsonDecode.forEach(row => {
+    console.log(row.gender)
+    inputGenero.insertAdjacentHTML("beforebegin","<li>"+row.gender+"</li>")
+ });
 
 });
