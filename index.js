@@ -51,6 +51,57 @@ io.on('connection',(socket)=>{
              })
             .catch(err => console.error('error:' + err));
     });
+    socket.on("servidor:pedido", (data) => {
+        switch (data) {
+            case 'pedido':
+                console.log("transmitiendo "+data+"...");
+                let jsonContenido = { 
+                    pedido:  Math.floor(Math.random() *10),
+                   
+                };
+                
+                io.sockets.emit("servidor:pedido",{
+                    json: jsonContenido,
+                    action: data
+                });
+                break;
+            case 'repartidor':
+                console.log("transmitiendo "+data+"...");
+                let options = {
+                    method: 'GET',
+                  
+                  };
+                  let url = 'https://randomuser.me/api/';
+                  fetch(url, options)
+                    .then(res => res.json())
+                    .then(json => {
+                                     
+                       let jso = JSON.stringify(json.results);  
+                         io.sockets.emit("servidor:pedido",{
+                            json: jso,
+                            action: data,
+                            status: "tomado/entregado"
+                        });
+                     })
+                    .catch(err => console.error('error:' + err));
+                break;
+            case 'socio':
+                console.log("transmitiendo "+data+"...");
+                let js = JSON.stringify({ 
+                    socio:  "dinoburger_"+ Math.floor(Math.random() *10),
+                    status: "liberado"
+
+                   
+                });  
+                io.sockets.emit("servidor:pedido",{
+                    json: js,
+                    action: data
+                });
+                break;        
+        }
+
+
+    });
 
 });
 

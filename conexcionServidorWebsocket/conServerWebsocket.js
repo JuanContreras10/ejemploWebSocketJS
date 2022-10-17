@@ -1,55 +1,33 @@
 console.log("iniciando chat");
-const socket = io(); //solo aplica en el mismo dominio si se conecta auno diferente 'http://etc..'
+
+const socket = io("http://localhost:3000/",{
+    transports: ["websocket"] 
+  }); // primer parametro puede ir vacio si aplica en el mismo dominio si se conecta a uno diferente 'http://etc..', segundo parametro es para no limitar las conexiones ws por cors
 
 //componestes dom
-let message = document.getElementById("message");
-let user = document.getElementById("user");
-let actions = document.getElementById("actions");
-let outputs = document.getElementById("outputs");
+
+let panelC = document.getElementById("panelC");
 let btnSend = document.getElementById("send");
-let inputGenero = document.getElementById("genero");
-let btnApi = document.getElementById("api");
+let btnPedido = document.getElementById("pedido");
+let btnRepartidor = document.getElementById("repartidor");
+let btnSocio = document.getElementById("socio");
+let contenidoTabla = document.getElementById("contenidoTabla");
 
-//mensaje al servidor
-btnSend.addEventListener("click", function() {
-
-   
-    socket.emit("chat:message", {
-        user: user.value,
-        message: message.value
-    });
-    
+btnSend.addEventListener("click", function() {   
+    socket.emit("servidor:api", "get");    
+});
+btnPedido.addEventListener("click", function() {   
+    socket.emit("servidor:pedido", "pedido");    
+});
+btnRepartidor.addEventListener("click", function() {   
+    socket.emit("servidor:pedido", "repartidor");    
+});
+btnSocio.addEventListener("click", function() {   
+    socket.emit("servidor:pedido", "socio");    
 });
 
-btnApi.addEventListener("click", function() {
-
-    console.log("click")
-    socket.emit("servidor:api", "get");
-    
-});
-
-message.addEventListener("keypress", function(){  
-    socket.emit("chat:typing", user.value);
-});
-
-//escuco al servidor
-socket.on("chat:message", function (data) {
-    actions.innerHTML = '';
-    outputs.innerHTML += `<p>
-    <strong>${data.user}</strong>: ${data.message}
-    </p>`;
 
 
-});
-
-socket.on("chat:typing", function (data) {   
-    actions.innerHTML = `<p><em>
-    ${data} esta escribiendo...
-    </em></p>`;
-   
-
-
-});
 
 socket.on("servidor:api", function (data) {   
     
@@ -58,11 +36,10 @@ socket.on("servidor:api", function (data) {
  
  jsonDecode.forEach(row => {
     console.log(row.gender)
-    inputGenero.insertAdjacentHTML("beforebegin","<li>"+row.gender+"</li>")
+    panelC.insertAdjacentHTML("beforebegin","<li>"+row.gender+"</li>")
  });
 
 });
-
 
 socket.on("servidor:pedido", function(data){
 
